@@ -1,4 +1,4 @@
-message("Loading gengine-vulkan module...")
+message(STATUS "Loading gengine-vulkan module...")
 
 find_package(Vulkan)
 
