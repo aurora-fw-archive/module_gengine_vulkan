@@ -1,6 +1,3 @@
-# module-gengine-vulkan
-
-```cpp
 /****************************************************************************
 ** ┌─┐┬ ┬┬─┐┌─┐┬─┐┌─┐  ┌─┐┬─┐┌─┐┌┬┐┌─┐┬ ┬┌─┐┬─┐┬┌─
 ** ├─┤│ │├┬┘│ │├┬┘├─┤  ├┤ ├┬┘├─┤│││├┤ ││││ │├┬┘├┴┐
@@ -18,4 +15,10 @@
 ** ensure the GNU Lesser General Public License version 3 requirements
 ** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 ****************************************************************************/
-```
+
+#ifndef AURORAFW_GENGINE__VULKAN_H
+#define AURORAFW_GENGINE__VULKAN_H
+
+#include <vulkan/vulkan.h>
+
+#endif // AURORAFW_GENGINE__VULKAN_H
