@@ -19,7 +19,7 @@ message(STATUS "Loading gengine-vulkan module...")
 find_package(Vulkan)
 
 if(Vulkan_FOUND)
-    add_definitions(-DAURORA_VULKAN_FOUND)
+	#set_target_properties(aurorafw-gengine-vulkan PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -DAURORA_VULKAN_FOUND")
 endif()
 
 include_directories(${AURORAFW_MODULE_GENGINE_VULKAN_DIR}/include)
