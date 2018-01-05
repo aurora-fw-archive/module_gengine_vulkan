@@ -19,6 +19,8 @@
 #ifndef AURORAFW_GENGINE__VULKAN_H
 #define AURORAFW_GENGINE__VULKAN_H
 
+#ifdef AFW__VULKAN_FOUND
 #include <vulkan/vulkan.h>
+#endif
 
 #endif // AURORAFW_GENGINE__VULKAN_H
