@@ -16,10 +16,20 @@
 
 message(STATUS "Loading gengine-vulkan module...")
 
-find_package(Vulkan)
+find_package(Vulkan REQUIRED)
 
-if(Vulkan_FOUND)
-	#set_target_properties(aurorafw-gengine-vulkan PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -DAURORA_VULKAN_FOUND")
+if (NOT CONFIGURED_ONCE)
+	set(AURORAFW_MODULE_GENGINE_VULKAN_SOURCE_DIR ${AURORAFW_MODULE_GENGINE_VULKAN_DIR}/src)
+endif()
+
+file(GLOB_RECURSE AURORAFW_MODULE_GENGINE_VULKAN_SOURCE ${AURORAFW_MODULE_GENGINE_VULKAN_SOURCE_DIR}/*.cpp)
+
+add_library(aurorafw-gengine-vulkan SHARED ${AURORAFW_MODULE_GENGINE_VULKAN_SOURCE})
+
+if(WIN32)
+	target_link_libraries(aurorafw-gengine-vulkan ${VULKAN_STATIC_LIBRARY})
+else()
+target_link_libraries(aurorafw-gengine-vulkan ${VULKAN_LIBRARY})
 endif()
 
 include_directories(${AURORAFW_MODULE_GENGINE_VULKAN_DIR}/include)
