@@ -16,6 +16,7 @@
 
 message(STATUS "Loading gengine-vulkan module...")
 
+#TODO: Check about Vulkan C++ API Binds
 find_package(Vulkan REQUIRED)
 
 if (NOT CONFIGURED_ONCE)

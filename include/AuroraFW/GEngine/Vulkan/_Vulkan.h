@@ -16,11 +16,20 @@
 ** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 ****************************************************************************/
 
-#ifndef AURORAFW_GENGINE__VULKAN_H
-#define AURORAFW_GENGINE__VULKAN_H
+#ifndef AURORAFW_GENGINE_VULKAN__VULKAN_H
+#define AURORAFW_GENGINE_VULKAN__VULKAN_H
 
-#ifdef AFW__VULKAN_FOUND
-#include <vulkan/vulkan.h>
+#include <AuroraFW/Global.h>
+#if(AFW_TARGET_PRAGMA_ONCE_SUPPORT)
+	#pragma once
 #endif
 
-#endif // AURORAFW_GENGINE__VULKAN_H
+#include <AuroraFW/Internal/Config.h>
+
+#ifdef AFW_TARGET_CC
+#	include <vulkan/vulkan.h>
+#else
+#	include <vulkan/vulkan.hpp>
+#endif
+
+#endif // AURORAFW_GENGINE_VULKAN__VULKAN_H
