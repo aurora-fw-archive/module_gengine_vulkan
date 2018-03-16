@@ -33,10 +33,17 @@
 namespace AuroraFW {
 	namespace GEngine {
 		namespace Vulkan {
-			struct AFW_API QueueFamilyIndices {
+			struct AFW_API PhysicalDevice {
+				vk::PhysicalDevice device;
+				vk::PhysicalDeviceFeatures features;
+				vk::PhysicalDeviceProperties properties;
+				vk::PhysicalDeviceMemoryProperties memoryProperties;
+			};
+
+			/*struct AFW_API QueueFamilyIndices {
 				int graphicsFamily = -1;
 				int presentFamily = -1;
-			};
+			};*/
 		}
 		class AFW_API VKContext : public API::Context
 		{
@@ -54,13 +61,14 @@ namespace AuroraFW {
 			void _destroy() override;
 
 		private:
+			//Vulkan::QueueFamilyIndices _findQueueFamilies(vk::PhysicalDevice );
+
 			std::string& _name;
 			vk::Instance _vkinstance;
 			vk::SurfaceKHR _vksurface;
-			vk::PhysicalDevice _vkphysicalDevice;
-			vk::Device _vkdevice;
-			vk::Queue _vkgraphicsqueue;
-			vk::Queue _vkpresentqueue;
+			//std::vector<Vulkan::PhysicalDevice> _vkphysicalDevices;
+			std::vector<vk::PhysicalDevice> _vkphysicalDevices;
+
 #ifdef AFW__DEBUG
 			VkDebugReportCallbackEXT _vkcallback;
 #endif

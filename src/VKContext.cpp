@@ -19,6 +19,7 @@
 #include <AuroraFW/GEngine/Vulkan/Context.h>
 
 #include <AuroraFW/STDL/STL/IOStream.h>
+#include <set>
 
 namespace AuroraFW {
 	namespace GEngine {
@@ -51,7 +52,7 @@ namespace AuroraFW {
 					throw std::runtime_error("VulkanContext: validation layers requested, but not available!");
 				}
 			}
-#endif
+#endif // AFW__DEBUG
 			vk::ApplicationInfo vk_appInfo(_name.c_str(), 0, "Aurora Framework", VK_MAKE_VERSION(AURORAFW_VERSION_MAJOR, AURORAFW_VERSION_MINOR, AURORAFW_VERSION_REVISION), VK_API_VERSION_1_0);
 
 			vk::InstanceCreateInfo vk_createInfo(vk::InstanceCreateFlags(), &vk_appInfo);
@@ -64,7 +65,7 @@ namespace AuroraFW {
 
 #ifdef AFW__DEBUG
 			extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
-#endif
+#endif // AFW__DEBUG
 
 			vk_createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
 			vk_createInfo.ppEnabledExtensionNames = extensions.data();
@@ -74,7 +75,7 @@ namespace AuroraFW {
 			vk_createInfo.ppEnabledLayerNames = VKContext::validationLayers.data();
 #else
 			vk_createInfo.enabledLayerCount = 0;
-#endif
+#endif // AFW__DEBUG
 
 			if(vk::createInstance(&vk_createInfo, AFW_NULLPTR, &_vkinstance) !=vk::Result::eSuccess)
 				throw std::runtime_error("VulkanContext: failed to create Vulkan instance!");
@@ -96,7 +97,7 @@ namespace AuroraFW {
 			}
 			if(vk_ret != VK_SUCCESS)
 				throw std::runtime_error("failed to set up debug callback!");
-#endif
+#endif // AFW__DEBUG
 			VkSurfaceKHR vk_surface;
 			if (glfwCreateWindowSurface(_vkinstance, window, AFW_NULLPTR, &vk_surface) != VK_SUCCESS)
 				throw std::runtime_error("VulkanContext: failed to create window surface!");
@@ -107,51 +108,102 @@ namespace AuroraFW {
 
 			if(vk_deviceCount == AFW_NULLVAL)
 				throw std::runtime_error("VulkanContext: failed to find GPUs with Vulkan support!");
-			std::vector<vk::PhysicalDevice> vk_devices(vk_deviceCount);
-			_vkinstance.enumeratePhysicalDevices(&vk_deviceCount, vk_devices.data());
+			_vkphysicalDevices = std::vector<vk::PhysicalDevice>(vk_deviceCount);
+			_vkinstance.enumeratePhysicalDevices(&vk_deviceCount, _vkphysicalDevices.data());
 
-			for(const vk::PhysicalDevice& vk_pdevice : vk_devices) {
-				uint32_t vk_queueFamilyCount = 0;
-				vk_pdevice.getQueueFamilyProperties(&vk_queueFamilyCount, AFW_NULLPTR);
+			/*
+			Vulkan::QueueFamilyIndices vk_indices;
+			for(const vk::PhysicalDevice& vk_pdevice : vk_devices)
+			{
+				Vulkan::QueueFamilyIndices vk_indicesi = _findQueueFamilies(vk_pdevice);
 
-				std::vector<vk::QueueFamilyProperties> vk_queueFamilies(vk_queueFamilyCount);
-				vk_pdevice.getQueueFamilyProperties(&vk_queueFamilyCount, vk_queueFamilies.data());
-
-				Vulkan::QueueFamilyIndices vk_indices;
-				int i = 0;
-				for (const auto& vk_queueFamily : vk_queueFamilies) {
-					if (vk_queueFamily.queueCount > 0 && vk_queueFamily.queueFlags & vk::QueueFlagBits::eGraphics) {
-						vk_indices.graphicsFamily = i;
-					}
-
-					VkBool32 vk_presentSupport = false;
-					vk_pdevice.getSurfaceSupportKHR(i, _vksurface, &vk_presentSupport);
-
-					if (vk_queueFamily.queueCount > 0 && vk_presentSupport) {
-						vk_indices.presentFamily = i;
-					}
-
-					if (vk_indices.graphicsFamily >= 0 && vk_indices.presentFamily >= 0) {
-						break;
-					}
-
-					i++;
-				}
-
-				if(vk_indices.graphicsFamily >= 0 && vk_indices.presentFamily >= 0) {
+				if(vk_indicesi.graphicsFamily >= 0 && vk_indicesi.presentFamily >= 0)
+				{
+					vk_indices = vk_indicesi;
 					_vkphysicalDevice = vk_pdevice;
 					break;
 				}
 			}
+
+			if (!_vkphysicalDevice)
+				throw std::runtime_error("failed to find a suitable GPU!");
+
+			std::vector<vk::DeviceQueueCreateInfo> vk_queueCreateInfos;
+			std::set<int> vk_uniqueQueueFamilies = {vk_indices.graphicsFamily, vk_indices.presentFamily};
+
+			float vk_queuePriority = 1.0f;
+			for (int vk_queueFamily : vk_uniqueQueueFamilies) {
+				vk::DeviceQueueCreateInfo queueCreateInfo(vk::DeviceQueueCreateFlags(), vk_queueFamily, 1, &vk_queuePriority);
+				vk_queueCreateInfos.push_back(queueCreateInfo);
+			}
+
+			vk::PhysicalDeviceFeatures deviceFeatures = {};
+
+			vk::DeviceCreateInfo vk_device_createInfo(vk::DeviceCreateFlags(), static_cast<uint32_t>(vk_queueCreateInfos.size()), vk_queueCreateInfos.data());
+
+			vk_device_createInfo.pEnabledFeatures = &deviceFeatures;
+			vk_device_createInfo.enabledExtensionCount = 0;
+
+#ifdef AFW__DEBUG
+				vk_device_createInfo.enabledLayerCount = static_cast<uint32_t>(VKContext::validationLayers.size());
+				vk_device_createInfo.ppEnabledLayerNames = VKContext::validationLayers.data();
+#else
+				vk_device_createInfo.enabledLayerCount = 0;
+#endif
+
+			if (_vkphysicalDevice.createDevice(&vk_device_createInfo, AFW_NULLPTR, &_vkdevice) != vk::Result::eSuccess)
+				throw std::runtime_error("failed to create logical device!");
+
+			_vkdevice.getQueue(vk_indices.graphicsFamily, 0, &_vkgraphicsQueue);
+			_vkdevice.getQueue(vk_indices.presentFamily, 0, &_vkpresentQueue);
+			*/
 		}
 
 		void VKContext::_destroy()
 		{
-			_vkinstance.destroy(AFW_NULLPTR);
+#ifdef AFW__DEBUG
+			PFN_vkDestroyDebugReportCallbackEXT func = (PFN_vkDestroyDebugReportCallbackEXT) _vkinstance.getProcAddr("vkDestroyDebugReportCallbackEXT");
+			if (func != AFW_NULLPTR)
+				func(_vkinstance, _vkcallback, AFW_NULLPTR);
+#endif // AFW__DEBUG
+			_vkinstance.destroy();
 		}
 
 		const std::vector<const char*> VKContext::validationLayers = {
 				"VK_LAYER_LUNARG_standard_validation"
 		};
+
+		/*
+		Vulkan::QueueFamilyIndices VKContext::_findQueueFamilies(vk::PhysicalDevice device) {
+			uint32_t vk_queueFamilyCount = 0;
+			device.getQueueFamilyProperties(&vk_queueFamilyCount, AFW_NULLPTR);
+
+			std::vector<vk::QueueFamilyProperties> vk_queueFamilies(vk_queueFamilyCount);
+			device.getQueueFamilyProperties(&vk_queueFamilyCount, vk_queueFamilies.data());
+
+			int i = 0;
+			Vulkan::QueueFamilyIndices vk_indices;
+			for (const auto& vk_queueFamily : vk_queueFamilies) {
+				if (vk_queueFamily.queueCount > 0 && vk_queueFamily.queueFlags & vk::QueueFlagBits::eGraphics) {
+					vk_indices.graphicsFamily = i;
+				}
+
+				VkBool32 vk_presentSupport = false;
+				device.getSurfaceSupportKHR(i, _vksurface, &vk_presentSupport);
+
+				if (vk_queueFamily.queueCount > 0 && vk_presentSupport) {
+					vk_indices.presentFamily = i;
+				}
+
+				if (vk_indices.graphicsFamily >= 0 && vk_indices.presentFamily >= 0) {
+					break;
+				}
+
+				i++;
+			}
+
+			return vk_indices;
+		}
+		*/
 	}
 }
