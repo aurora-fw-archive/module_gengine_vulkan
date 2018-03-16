@@ -32,20 +32,38 @@
 
 namespace AuroraFW {
 	namespace GEngine {
+		namespace Vulkan {
+			struct AFW_API QueueFamilyIndices {
+				int graphicsFamily = -1;
+				int presentFamily = -1;
+			};
+		}
 		class AFW_API VKContext : public API::Context
 		{
 		public:
 			VKContext(std::string& );
 
 			inline static VKContext* getInstance() { return (VKContext*)_instance; }
-		
+
+#ifdef AFW__DEBUG
+			static const std::vector<const char*> validationLayers;
+#endif
+
 		protected:
-			void _init() override;
+			void _init(GLFWwindow* ) override;
 			void _destroy() override;
 
 		private:
 			std::string& _name;
 			vk::Instance _vkinstance;
+			vk::SurfaceKHR _vksurface;
+			vk::PhysicalDevice _vkphysicalDevice;
+			vk::Device _vkdevice;
+			vk::Queue _vkgraphicsqueue;
+			vk::Queue _vkpresentqueue;
+#ifdef AFW__DEBUG
+			VkDebugReportCallbackEXT _vkcallback;
+#endif
 		};
 	}
 }
