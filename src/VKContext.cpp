@@ -108,8 +108,20 @@ namespace AuroraFW {
 
 			if(vk_deviceCount == AFW_NULLVAL)
 				throw std::runtime_error("VulkanContext: failed to find GPUs with Vulkan support!");
-			_vkphysicalDevices = std::vector<vk::PhysicalDevice>(vk_deviceCount);
-			_vkinstance.enumeratePhysicalDevices(&vk_deviceCount, _vkphysicalDevices.data());
+
+			std::vector<vk::PhysicalDevice> vk_physicalDevices(vk_deviceCount);
+			_vkinstance.enumeratePhysicalDevices(&vk_deviceCount, vk_physicalDevices.data());
+
+			_vkphysicalDevices = std::vector<Vulkan::PhysicalDevice>(vk_deviceCount);
+			int i = 0;
+			for (const vk::PhysicalDevice &vk_physicalDevice : vk_physicalDevices)
+			{
+				_vkphysicalDevices[i]->device = vk_physicalDevice;
+				vk_physicalDevice.getFeatures(&_vkphysicalDevices[i]->features);
+				vk_physicalDevice.getProperties(&_vkphysicalDevices[i]->properties);
+				vk_physicalDevice.getMemoryProperties(&_vkphysicalDevices[i]->memoryProperties);
+				i++;
+			}
 
 			/*
 			Vulkan::QueueFamilyIndices vk_indices;

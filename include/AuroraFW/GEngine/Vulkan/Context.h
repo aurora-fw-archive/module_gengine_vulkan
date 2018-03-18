@@ -30,6 +30,8 @@
 
 #include <AuroraFW/GEngine/API/Context.h>
 
+#include <memory>
+
 namespace AuroraFW {
 	namespace GEngine {
 		namespace Vulkan {
@@ -38,6 +40,8 @@ namespace AuroraFW {
 				vk::PhysicalDeviceFeatures features;
 				vk::PhysicalDeviceProperties properties;
 				vk::PhysicalDeviceMemoryProperties memoryProperties;
+				bool isPrimary = false;
+				uint32_t index;
 			};
 
 			/*struct AFW_API QueueFamilyIndices {
@@ -66,8 +70,7 @@ namespace AuroraFW {
 			std::string& _name;
 			vk::Instance _vkinstance;
 			vk::SurfaceKHR _vksurface;
-			//std::vector<Vulkan::PhysicalDevice> _vkphysicalDevices;
-			std::vector<vk::PhysicalDevice> _vkphysicalDevices;
+			std::vector<std::shared_ptr<Vulkan::PhysicalDevice>> _vkphysicalDevices;
 
 #ifdef AFW__DEBUG
 			VkDebugReportCallbackEXT _vkcallback;
