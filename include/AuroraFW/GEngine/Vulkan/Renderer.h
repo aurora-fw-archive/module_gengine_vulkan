@@ -16,8 +16,8 @@
 ** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 ****************************************************************************/
 
-#ifndef AURORAFW_GENGINE_VULKAN_CONTEXT_H
-#define AURORAFW_GENGINE_VULKAN_CONTEXT_H
+#ifndef AURORAFW_GENGINE_VULKAN_RENDERER_H
+#define AURORAFW_GENGINE_VULKAN_RENDERER_H
 
 #include <AuroraFW/Global.h>
 #if(AFW_TARGET_PRAGMA_ONCE_SUPPORT)
@@ -28,56 +28,23 @@
 
 #include <AuroraFW/GEngine/Vulkan/Global.h>
 
-#include <AuroraFW/GEngine/API/Context.h>
-
-#include <memory>
+#include <AuroraFW/GEngine/API/Renderer.h>
 
 namespace AuroraFW {
 	namespace GEngine {
-		namespace Vulkan {
-			struct AFW_API PhysicalDevice {
-				vk::PhysicalDevice device;
-				vk::PhysicalDeviceFeatures features;
-				vk::PhysicalDeviceProperties properties;
-				vk::PhysicalDeviceMemoryProperties memoryProperties;
-				bool isPrimary = false;
-				uint32_t index;
-			};
-
-			/*struct AFW_API QueueFamilyIndices {
-				int graphicsFamily = -1;
-				int presentFamily = -1;
-			};*/
-		}
-		class AFW_API VKContext : public API::Context
+		class VKRenderer : public Renderer
 		{
 		public:
-			VKContext(std::string& );
-
-			inline static VKContext* getInstance() { return (VKContext*)_instance; }
-
-#ifdef AFW__DEBUG
-			static const std::vector<const char*> validationLayers;
-#endif
-
-		protected:
-			void _init(GLFWwindow* ) override;
-			void _destroy() override;
-
+			VKRenderer();
+			void clear(uint ) override;
+			void setViewport(uint , uint , uint , uint ) override;
+			void setDepthTesting(bool ) override;
+			void setBlend(bool ) override;
+		
 		private:
-			//Vulkan::QueueFamilyIndices _findQueueFamilies(vk::PhysicalDevice );
-
-			std::string& _name;
-			vk::Instance _vkinstance;
-			vk::SurfaceKHR _vksurface;
-			uint primaryIndex;
-			std::vector<std::shared_ptr<Vulkan::PhysicalDevice>> _vkphysicalDevices;
-
-#ifdef AFW__DEBUG
-			VkDebugReportCallbackEXT _vkcallback;
-#endif
+			
 		};
 	}
 }
 
-#endif // AURORAFW_GENGINE_VULKAN_CONTEXT_H
+#endif // AURORAFW_GENGINE_VULKAN_RENDERER_H

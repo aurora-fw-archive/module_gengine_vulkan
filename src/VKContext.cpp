@@ -17,6 +17,7 @@
 ****************************************************************************/
 
 #include <AuroraFW/GEngine/Vulkan/Context.h>
+#include <AuroraFW/CoreLib/Allocator.h>
 
 #include <AuroraFW/STDL/STL/IOStream.h>
 #include <set>
@@ -112,10 +113,11 @@ namespace AuroraFW {
 			std::vector<vk::PhysicalDevice> vk_physicalDevices(vk_deviceCount);
 			_vkinstance.enumeratePhysicalDevices(&vk_deviceCount, vk_physicalDevices.data());
 
-			_vkphysicalDevices = std::vector<Vulkan::PhysicalDevice>(vk_deviceCount);
+			_vkphysicalDevices = std::vector<std::shared_ptr<Vulkan::PhysicalDevice>>(vk_deviceCount);
 			int i = 0;
 			for (const vk::PhysicalDevice &vk_physicalDevice : vk_physicalDevices)
 			{
+				_vkphysicalDevices[i] = std::shared_ptr<Vulkan::PhysicalDevice>(AFW_NEW Vulkan::PhysicalDevice);
 				_vkphysicalDevices[i]->device = vk_physicalDevice;
 				vk_physicalDevice.getFeatures(&_vkphysicalDevices[i]->features);
 				vk_physicalDevice.getProperties(&_vkphysicalDevices[i]->properties);
