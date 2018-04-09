@@ -27,24 +27,24 @@
 #include <AuroraFW/Internal/Config.h>
 
 #include <AuroraFW/GEngine/Vulkan/Global.h>
-
 #include <AuroraFW/GEngine/API/Renderer.h>
 
-namespace AuroraFW {
-	namespace GEngine {
-		class VKRenderer : public Renderer
-		{
-		public:
-			VKRenderer();
-			void clear(uint ) override;
-			void setViewport(uint , uint , uint , uint ) override;
-			void setDepthTesting(bool ) override;
-			void setBlend(bool ) override;
+namespace AuroraFW::GEngine::API {
+	class VKRenderer : public Renderer
+	{
+	public:
+		VKRenderer();
+		void clear(uint ) override;
+		void setViewport(uint , uint , uint , uint ) override;
+		void setDepthTesting(bool ) override;
+		void setBlend(bool ) override;
+		void setBlendFunction(BlendFunction , BlendFunction ) override;
+		void setBlendEquation(BlendEquation ) override;
+		void draw(const API::VertexArray* , const API::IndexBuffer* , const RTShaderPipeline* ) const override;
+	
+	private:
 		
-		private:
-			
-		};
-	}
+	};
 }
 
 #endif // AURORAFW_GENGINE_VULKAN_RENDERER_H

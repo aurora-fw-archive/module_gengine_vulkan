@@ -18,21 +18,44 @@
 
 #include <AuroraFW/GEngine/Vulkan/Renderer.h>
 
-namespace AuroraFW {
-	namespace GEngine {
-		VKRenderer::VKRenderer()
-		{}
+namespace AuroraFW::GEngine::API {
+	VKRenderer::VKRenderer()
+	{
+		#pragma message("TODO: Need to be implemented")
+	}
 
-		void VKRenderer::clear(uint )
-		{}
+	void VKRenderer::clear(uint )
+	{
+		#pragma message("TODO: Need to be implemented")
+	}
 
-		void VKRenderer::setViewport(uint , uint , uint , uint )
-		{}
+	void VKRenderer::setViewport(uint , uint , uint , uint )
+	{
+		#pragma message("TODO: Need to be implemented")
+	}
 
-		void VKRenderer::setDepthTesting(bool )
-		{}
+	void VKRenderer::setDepthTesting(bool )
+	{
+		#pragma message("TODO: Need to be implemented")
+	}
 
-		void VKRenderer::setBlend(bool )
-		{}
+	void VKRenderer::setBlend(bool )
+	{
+		#pragma message("TODO: Need to be implemented")
+	}
+
+	void VKRenderer::setBlendFunction(BlendFunction , BlendFunction )
+	{
+		#pragma message("TODO: Need to be implemented")
+	}
+
+	void VKRenderer::setBlendEquation(BlendEquation ) 
+	{
+		#pragma message("TODO: Need to be implemented")
+	}
+
+	void VKRenderer::draw(const API::VertexArray* , const API::IndexBuffer* , const RTShaderPipeline* ) const
+	{
+		#pragma message("TODO: Need to be implemented")
 	}
 }

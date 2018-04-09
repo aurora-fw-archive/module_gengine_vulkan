@@ -17,7 +17,6 @@
 ****************************************************************************/
 
 #include <AuroraFW/GEngine/Vulkan/Context.h>
-#include <AuroraFW/CoreLib/Allocator.h>
 
 #include <AuroraFW/STDL/STL/IOStream.h>
 #include <set>
