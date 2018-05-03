@@ -40,9 +40,11 @@ namespace AuroraFW::GEngine::API {
 		void setBlend(bool ) override;
 		void setBlendFunction(BlendFunction , BlendFunction ) override;
 		void setBlendEquation(BlendEquation ) override;
-		void draw(const API::VertexArray* , const API::IndexBuffer* , const RTShaderPipeline* ) const override;
-	
-	private:
+		void setClearColor(ColorF ) override;
+		void draw(const API::VertexArray *, const API::IndexBuffer *, const RTShaderPipeline *) const override;
+		void draw(const API::VertexArray* , const API::IndexBuffer* , uint ) const override;
+
+	  private:
 		
 	};
 }

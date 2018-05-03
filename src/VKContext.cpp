@@ -182,9 +182,11 @@ namespace AuroraFW {
 			_vkinstance.destroy();
 		}
 
+#ifdef AFW__DEBUG
 		const std::vector<const char*> VKContext::validationLayers = {
 				"VK_LAYER_LUNARG_standard_validation"
 		};
+#endif // AFW__DEBUG
 
 		/*
 		Vulkan::QueueFamilyIndices VKContext::_findQueueFamilies(vk::PhysicalDevice device) {

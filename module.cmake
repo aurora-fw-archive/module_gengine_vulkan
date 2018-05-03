@@ -25,7 +25,7 @@ endif()
 
 file(GLOB_RECURSE AURORAFW_MODULE_GENGINE_VULKAN_SOURCE ${AURORAFW_MODULE_GENGINE_VULKAN_SOURCE_DIR}/*.cpp)
 
-add_library(aurorafw-gengine-vulkan SHARED ${AURORAFW_MODULE_GENGINE_VULKAN_SOURCE})
+add_library(aurorafw-gengine-vulkan STATIC ${AURORAFW_MODULE_GENGINE_VULKAN_SOURCE})
 
 if(WIN32)
 	target_link_libraries(aurorafw-gengine-vulkan ${VULKAN_STATIC_LIBRARY})

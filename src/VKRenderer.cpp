@@ -34,6 +34,11 @@ namespace AuroraFW::GEngine::API {
 		#pragma message("TODO: Need to be implemented")
 	}
 
+	void VKRenderer::setClearColor(ColorF )
+	{
+		#pragma message("TODO: Need to be implemented")
+	}
+
 	void VKRenderer::setDepthTesting(bool )
 	{
 		#pragma message("TODO: Need to be implemented")
@@ -55,6 +60,11 @@ namespace AuroraFW::GEngine::API {
 	}
 
 	void VKRenderer::draw(const API::VertexArray* , const API::IndexBuffer* , const RTShaderPipeline* ) const
+	{
+		#pragma message("TODO: Need to be implemented")
+	}
+
+	void VKRenderer::draw(const API::VertexArray* , const API::IndexBuffer* , uint ) const
 	{
 		#pragma message("TODO: Need to be implemented")
 	}
